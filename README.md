@@ -31,6 +31,14 @@ If all went well, one should observe three separate `EasyVis` instances arranged
 
 ![Example view from test data](example.png)
 
+## Docker
+
+	EasyVis $ docker build -t EasyVis .
+
+	EasyVis $ docker run -it --rm -p 3000:3000 EasyVis
+
+Note: remember to expose the appropriate ports via the `docker run` command line (e.g. `-p 3000:3000`)
+
 ## Notes
 
 To ensure the EasyVis views resize correctly, we must take care to ensure:
