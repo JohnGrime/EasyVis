@@ -7,35 +7,34 @@ const bodyParser = require( "body-parser" );
 const helmet = require( "helmet" );
 
 //
-// Spiral method using the "golden ratio" to generate points on a sphere surface:
-// http://web.archive.org/web/20120421191837/http://www.cgafaq.info/wiki/Evenly_distributed_points_on_sphere
-//
-function getUnitSpherePoints( target_N ) {
-	const dl = Math.PI * (3.0-Math.sqrt(5.0));
-	const dz = 2.0 / target_N;
-	
-	let l = 0.0;
-	let z = 1.0 - dz/2;
-
-	let triplet_vec = [];
-	for( let i=0; i<target_N; i++ ) {
-		const r = Math.sqrt( 1.0-z*z );
-		const x = Math.cos( l ) * r;
-		const y = Math.sin( l ) * r;
-
-		triplet_vec.push( [x,y,z] );
-
-		z -= dz;
-		l += dl;
-	}
-	return triplet_vec;
-}
-
-//
 // Create a simple scene for testing.
 //
 function generateScene( target_N ) {
 	const colors = [ 0xff0000, 0x00ff00, 0x0000ff ];
+
+	// Spiral method using the "golden ratio" to generate points on a sphere surface:
+	// http://web.archive.org/web/20120421191837/http://www.cgafaq.info/wiki/Evenly_distributed_points_on_sphere
+	function getUnitSpherePoints( target_N ) {
+		const dl = Math.PI * (3.0-Math.sqrt(5.0));
+		const dz = 2.0 / target_N;
+		
+		let l = 0.0;
+		let z = 1.0 - dz/2;
+
+		let triplet_vec = [];
+		for( let i=0; i<target_N; i++ ) {
+			const r = Math.sqrt( 1.0-z*z );
+			const x = Math.cos( l ) * r;
+			const y = Math.sin( l ) * r;
+
+			triplet_vec.push( [x,y,z] );
+
+			z -= dz;
+			l += dl;
+		}
+		return triplet_vec;
+	}
+
 	let scene = { structures: {} };
 
 	//

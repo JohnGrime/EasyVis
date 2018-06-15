@@ -2,46 +2,23 @@
 
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
-//
-// Main code starts here.
-//
-
 let worlds = [];        // allow for multiple independent 3D scenes
 let staticScene = true; // do we need animation loops for scenes?
 
 //
 // Use DOM to hook up renderers to "EasyVis" elements
 //
-/*
 {
-	let elements = document.getElementsByClassName( "EasyVis" );
-	for( let e of elements ) {
-		let world = new World( 1, 1, window.devicePixelRatio, e );
-		world.renderer.setClearColor( 0x000000, 0.3 );
-		worlds.push( world );
-	}
-}
-*/
-
-//
-// Use DOM to hook up renderers to "EasyVis" elements
-//
-///*
-{
-//	console.log( "started" );
 	let elements = document.getElementsByClassName( "EasyVis" );
 	for( let elem of elements ) {
 		let canvas = document.createElement( "canvas" );
-
 		let world = new World( 1, 1, window.devicePixelRatio, canvas );
 		world.renderer.setClearColor( 0x000000, 0.3 );
 		worlds.push( world );
-
 		elem.appendChild( canvas );
 	}
 
 }
-//*/
 
 window.addEventListener( 'resize', resizeHandler, false );
 resizeHandler();
