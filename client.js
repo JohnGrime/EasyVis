@@ -29,10 +29,9 @@ let staticScene = true; // do we need animation loops for scenes?
 ///*
 {
 //	console.log( "started" );
-	let elements = document.getElementsByClassName( "EasyVisDiv" );
+	let elements = document.getElementsByClassName( "EasyVis" );
 	for( let elem of elements ) {
 		let canvas = document.createElement( "canvas" );
-		canvas.className = "EasyVisCanvas";
 
 		let world = new World( 1, 1, window.devicePixelRatio, canvas );
 		world.renderer.setClearColor( 0x000000, 0.3 );

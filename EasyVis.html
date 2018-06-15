@@ -6,11 +6,6 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
-			body {
-				margin: 0;
-				padding: 0;
-			}
-
 			@keyframes wiggle {
 				0%   { transform: rotate( 0deg); }
 				25%  { transform: rotate(-5deg); }
@@ -24,13 +19,13 @@
 				grid-template-columns: 1fr 1fr 1fr;
 			}
 
-			div.EasyVisDiv {
+			div.EasyVis {
 				min-width: 0;
 				min-height: 0;
 				animation-name: wiggle;
 				animation-duration: 0.75s;
 			}
-			div.EasyVisDiv:hover {
+			div.EasyVis:hover {
 				outline: 1px solid red;
 			}
 
@@ -55,9 +50,9 @@
 		<script src="node_modules/three/examples/js/Detector.js"></script>
 
 		<div id= vis_container" class="vis_container">
-			<div id="1" class="EasyVisDiv"></div>
-			<div id="2" class="EasyVisDiv"></div>
-			<div id="3" class="EasyVisDiv"></div>
+			<div id="1" class="EasyVis"></div>
+			<div id="2" class="EasyVis"></div>
+			<div id="3" class="EasyVis"></div>
 		</div>
 
 		<script src="util.js"></script>
