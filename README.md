@@ -9,7 +9,7 @@ Includes example Docker file for building containerized derivatives for deployme
 * [Three.js](https://threejs.org/)
 * [Node.js](https://nodejs.org/) (for simple test server)
 
-The example Node.js server also makes use of some standard tools ([Express](https://expressjs.com/), [Compression](https://www.npmjs.com/package/compression), [Helmet](https://github.com/helmetjs/helmet)) which are available via available via [npm](https://www.npmjs.com/).
+The example Node.js server (`server.js`) also makes use of some standard tools ([Express](https://expressjs.com/), [Compression](https://www.npmjs.com/package/compression), [Helmet](https://github.com/helmetjs/helmet)) which are available via [npm](https://www.npmjs.com/).
 
 ## Platform compatibility
 
@@ -23,7 +23,9 @@ For a quick and simple test, run the provided `server.js` script with Node:
 
 ... and then point your web browser to `localhost:3000`.
 
-The example Web page (`EasyVis.html`) sets up three `div` elements of class `EasyVis`. These `div` elements are identified by the client browser (see `client.js`), which then inserts a new `canvas` element into each to act as the target for an EasyVis instance. Each renderer then posts a `GET` request to `/scene/X`, with `X` an integer ID to identify the specific EasyVis instance.
+The example Web page (`EasyVis.html`) sets up three `div` elements of class `EasyVis`. These `div` elements are identified by the client browser (see `client.js`), which then inserts a new `canvas` element into each `div` as the target for an `EasyVis` instance.
+
+Each `EasyVis` instance then posts a `GET` request to `/scene/X`, with `X` an integer ID to identify the specific EasyVis instance.
 
 If all went well, one should observe three separate EasyVis instances side-by-side in the web browser, each with a similar (but different!) test scene displayed (**Fig. 1**).
 
