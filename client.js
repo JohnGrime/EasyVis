@@ -40,7 +40,8 @@ else {
 //
 {
 	//
-	// Auto-cache geometry and materials we're using for efficiency.
+	// Auto-cache geometry and materials as we generate them; this is a precursor
+	// for another project.
 	//
 	let cache = new MeshCache();
 
@@ -109,17 +110,6 @@ function render() {
 }
 
 // Could chew CPU if not throttled!
-/*
-function resizeHandler() {
-	let container = document.getElementById( 'vis_container' );
-	let w = Math.floor( container.clientWidth/worlds.length );
-	let h = container.clientHeight;
-	for( let world of worlds ) {
-		world.Resize( w, h );
-	}
-};
-*/
-
 function resizeHandler() {
 	for( let world of worlds ) {
 		let parent_elem = world.renderer.domElement.parentNode;

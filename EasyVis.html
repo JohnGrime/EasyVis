@@ -28,23 +28,10 @@
 			div.EasyVis:hover {
 				outline: 1px solid red;
 			}
-
 		</style>
 	</head>
 
 	<body>
-
-			<!--
-				Important; For the vis items to resize correctly,
-				we need a few things:
-
-				1. The container columns should be specified with "fr" units, rather than "auto" etc.
-				2. The div items contining the 3D views should set min heigh and width properties to 0;
-				   this is because the elements are not allowed to shrink smaller than their content.
-				   If we make the content (canvas) larger on resize, we cannot then shrink the divs in response
-				   to a display resize!
-			-->
-
 		<script src="node_modules/three/build/three.min.js"></script>
 		<script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
 		<script src="node_modules/three/examples/js/Detector.js"></script>

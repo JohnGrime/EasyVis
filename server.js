@@ -194,7 +194,7 @@ let app = express();
 	}
 
 	//
-	// Debug! rint some incoming connection information.
+	// Debug! Print some information about incoming connections.
 	//
 	app.use( (req,res,next) => {
 		

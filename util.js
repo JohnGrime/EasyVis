@@ -49,10 +49,7 @@ class World {
 	Resize( width, height ) {
 		this.camera.aspect = width/height;
 		this.camera.updateProjectionMatrix();
-		
 		this.renderer.setSize( width, height );
-//		this.renderer.setSize( width, height, false );
-
 		this.Render();
 	}
 
