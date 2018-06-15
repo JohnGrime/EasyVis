@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<title>three.js webgl - orbit controls</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				margin: 0px;
+				display: block;
+				background-size: cover;
+			}
+
+			@keyframes wiggle {
+				0%   { transform: rotate( 0deg); }
+				25%  { transform: rotate(-5deg); }
+				75%  { transform: rotate( 5deg); }
+				100% { transform: rotate( 0deg); }
+			}
+
+			div.vis_container {
+				height: 33vh;
+				text-align: center;
+				display: grid;
+				grid-template-columns: auto auto auto;
+			}
+
+			canvas.EasyVis {
+				animation-name: wiggle;
+				animation-duration: 0.75s;
+			}
+			canvas.EasyVis:hover {
+				outline: 1px solid red;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<script src="node_modules/three/build/three.min.js"></script>
+		<script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
+		<script src="node_modules/three/examples/js/Detector.js"></script>
+
+
+		<div id= "vis_container" class="vis_container">
+			<canvas id="vis1" class="EasyVis"></canvas>
+			<canvas id="vis2" class="EasyVis"></canvas>
+			<canvas id="vis3" class="EasyVis"></canvas>
+		</div>
+
+		<script src="util.js"></script>
+		<script src="client.js"></script>
+
+	</body>
+</html>
