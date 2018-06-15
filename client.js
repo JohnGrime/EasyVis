@@ -12,14 +12,37 @@ let staticScene = true; // do we need animation loops for scenes?
 //
 // Use DOM to hook up renderers to "EasyVis" elements
 //
+/*
 {
 	let elements = document.getElementsByClassName( "EasyVis" );
 	for( let e of elements ) {
-	let world = new World( 1, 1, window.devicePixelRatio, e );
+		let world = new World( 1, 1, window.devicePixelRatio, e );
 		world.renderer.setClearColor( 0x000000, 0.3 );
 		worlds.push( world );
 	}
 }
+*/
+
+//
+// Use DOM to hook up renderers to "EasyVis" elements
+//
+///*
+{
+//	console.log( "started" );
+	let elements = document.getElementsByClassName( "EasyVisDiv" );
+	for( let elem of elements ) {
+		let canvas = document.createElement( "canvas" );
+		canvas.className = "EasyVisCanvas";
+
+		let world = new World( 1, 1, window.devicePixelRatio, canvas );
+		world.renderer.setClearColor( 0x000000, 0.3 );
+		worlds.push( world );
+
+		elem.appendChild( canvas );
+	}
+
+}
+//*/
 
 window.addEventListener( 'resize', resizeHandler, false );
 resizeHandler();
@@ -110,11 +133,24 @@ function render() {
 }
 
 // Could chew CPU if not throttled!
+/*
 function resizeHandler() {
 	let container = document.getElementById( 'vis_container' );
 	let w = Math.floor( container.clientWidth/worlds.length );
 	let h = container.clientHeight;
 	for( let world of worlds ) {
 		world.Resize( w, h );
+	}
+};
+*/
+
+function resizeHandler() {
+	for( let world of worlds ) {
+		let parent_elem = world.renderer.domElement.parentNode;
+		let w = parent_elem.clientWidth;
+		let h = parent_elem.clientHeight;
+		console.log( parent_elem, w, h );
+		world.Resize( w, h );
+
 	}
 };

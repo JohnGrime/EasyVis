@@ -51,6 +51,7 @@ class World {
 		this.camera.updateProjectionMatrix();
 		
 		this.renderer.setSize( width, height );
+//		this.renderer.setSize( width, height, false );
 
 		this.Render();
 	}
