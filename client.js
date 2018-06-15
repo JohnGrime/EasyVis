@@ -1,9 +1,5 @@
 "use strict";
 
-function structureToTHREEObject( structure ) {
-
-};
-
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 //
@@ -14,7 +10,7 @@ let worlds = [];        // allow for multiple independent 3D scenes
 let staticScene = true; // do we need animation loops for scenes?
 
 //
-// Use DOM to set up scenes in "vis" elements
+// Use DOM to hook up renderers to "EasyVis" elements
 //
 {
 	let elements = document.getElementsByClassName( "EasyVis" );
@@ -40,56 +36,8 @@ else {
 	animate();
 }
 
-let scene_data = {
-	"structures": {},
-};
-
 //
-// Set up scene objects
-//
-{
-	let colors = [ 0xff0000, 0x00ff00, 0x0000ff ];
-
-	//
-	// Axes
-	//
-	{
-		let r = 1.0, delta = 2.0;
-
-		let structure = [];
-		structure.push( { type:"cuboid", color:0xffffff, scale:[2,2,2], xyz:[0,0,0] } );
-		for( let axis=0; axis<3; axis++ ) {
-			for( let i=0; i<2; i++ ) {
-				let x = (axis==0) ? ((1+i)*delta) : (0);
-				let y = (axis==1) ? ((1+i)*delta) : (0);
-				let z = (axis==2) ? ((1+i)*delta) : (0);
-				structure.push( { type:"sphere", color:colors[axis], scale:[r,r,r], xyz:[x,y,z] } );
-			}
-		}
-		scene_data.structures.axes = structure;
-	}
-
-	//
-	// Bounding sphere
-	//
-	{
-		let r = 0.2, outer_r = 10.0;
-		let triplet_vec = getUnitSpherePoints( 100 );
-		
-		let structure = [];
-		for( let [x,y,z] of triplet_vec ) {
-			structure.push( {
-				type:"sphere",
-				color:0xffffff,
-				scale:[r,r,r],
-				xyz:[x*outer_r,y*outer_r,z*outer_r] } );
-		}
-		scene_data.structures.boundary = structure;
-	}
-}
-
-//
-// Process scene data: convert into THREE objects
+// Fetch scene data as JSON, convert into THREE objects
 //
 {
 	//
@@ -97,30 +45,40 @@ let scene_data = {
 	//
 	let cache = new MeshCache();
 
-	let structures = scene_data.structures;
+	//
+	// Here we tag each request with a unique ID for each specific view.
+	// 
+	//
+	for( let world_i=0; world_i<worlds.length; world_i++ ) {
+		let world = worlds[world_i];
+		fetch( `/scene/${world_i}` )
+		.then( response => response.json() )
+		.then( function(scene_data) {
+			let objects = [];
+			let structures = scene_data.structures;
+			for( let key of Object.keys(structures) ) {
+				let obj = new THREE.Object3D();
+				for( let s of structures[key] ) {
+					
+					let type = s.type || "sphere";
+					let color = s.color || 0x000000;
+					let [sx,sy,sz] = s.scale || [1,1,1];
+					let [x,y,z] = s.xyz || [0,0,0];
 
-	for( let world of worlds ) {
-		let scene_objects = [];
+					let mesh = cache.get( {type, color, sx,sy,sz, x,y,z} );
 
-		for( let key of Object.keys(structures) ) {
-			let obj = new THREE.Object3D();
-			for( let s of structures[key] ) {
-				
-				let type = s.type || "sphere";
-				let color = s.color || 0x000000;
-				let [sx,sy,sz] = s.scale || [1,1,1];
-				let [x,y,z] = s.xyz || [0,0,0];
-
-				let mesh = cache.get( {type, color, sx,sy,sz, x,y,z} );
-
-				mesh.matrixAutoUpdate = false; // require explicit updateMatrix()
-				obj.add( mesh );
+					mesh.matrixAutoUpdate = false; // require explicit updateMatrix()
+					obj.add( mesh );
+				}
+				obj.updateMatrix();
+				objects.push( obj );
 			}
-			obj.updateMatrix();
-			scene_objects.push( obj );
-		}
-
-		world.Rebuild( scene_objects, createSceneLights() );
+			world.Rebuild( objects, createSceneLights() );
+		})
+		.catch( function(error) {
+			console.log( `Unable to retrieve scene data for view ${world_i}` );
+		})
+		.then( () => world.Render() );
 	}
 }
 

@@ -11,7 +11,7 @@ class World {
 			this.renderer.setClearColor( 0x000000, 0 );
 
 		this.camera = new THREE.PerspectiveCamera( 60, width/height, 1, 1000 );
-			this.camera.position.set( 10, 10, 10 );
+			this.camera.position.set( 15, 15, 15 );
 
 		this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 			this.controls.enableDamping = true; // animation loop required if damping or auto-rotation used
@@ -27,8 +27,7 @@ class World {
 	}
 
 	Rebuild( objects, lights ) {
-		for( let object of this.scene.children )
-		{
+		for( let object of this.scene.children ) {
 			if ( object.geometry ) object.geometry.dispose();
 			if ( object.material ) object.material.dispose();
 			if ( object.texture )  object.texture.dispose();
@@ -133,32 +132,5 @@ class MeshCache {
 	}
 }
 
-
-//
-// Spiral method using the "golden ratio" to generate points on a sphere surface:
-// http://web.archive.org/web/20120421191837/http://www.cgafaq.info/wiki/Evenly_distributed_points_on_sphere
-//
-function getUnitSpherePoints( target_N ) {
-	const dl = Math.PI * (3.0-Math.sqrt(5.0));
-	const dz = 2.0 / target_N;
-	
-	let l = 0.0;
-	let z = 1.0 - dz/2;
-
-	let triplet_vec = [];
-	for( let i=0; i<target_N; i++ ) {
-		const r = Math.sqrt( 1.0-z*z );
-		const x = Math.cos( l ) * r;
-		const y = Math.sin( l ) * r;
-
-		triplet_vec.push( [x,y,z] );
-
-		z -= dz;
-		l += dl;
-	}
-//	console.log( triplet_vec.length + ' sphere points created.' );
-	return triplet_vec;
-}
-
 // In the unlikely event we're using this via require("xxx") on server side.
-//module.exports = { World, MeshCache, getUnitSpherePoints };
+//module.exports = { World, MeshCache };

@@ -1,22 +1,3 @@
-/*
-Connect via web browser, e.g.:
-
-REST-y stuff:
-
-curl -v -X POST -H "Content-Type: application/json" -d '{"N": 9}' localhost:3000
-curl -v -X PUT  -H "Content-Type: application/json" -d '{"type":0,"x":0,"y":1,"z":2}' localhost:3000/0
-curl -v localhost:3000/0
-
-
-
- curl -v -X POST -H "Content-Type: application/json" -d '{"N": 9}' localhost:3000 => generate 9 particle system
-
-curl -v localhost:3000/0/xyz => get coords of particle at index 0
-
-curl -v -X PUT -H "Content-Type: application/json" -d '{"x":0,"y":0,"z":0}' localhost:3000/0/xyz => set coords of particle at index 0
-
-*/
-
 "use strict";
 
 const fs = require( "fs" );
@@ -26,57 +7,80 @@ const bodyParser = require( "body-parser" );
 const helmet = require( "helmet" );
 
 //
-// A microstate describes the current system.
+// Spiral method using the "golden ratio" to generate points on a sphere surface:
+// http://web.archive.org/web/20120421191837/http://www.cgafaq.info/wiki/Evenly_distributed_points_on_sphere
 //
-class Microstate {
+function getUnitSpherePoints( target_N ) {
+	const dl = Math.PI * (3.0-Math.sqrt(5.0));
+	const dz = 2.0 / target_N;
+	
+	let l = 0.0;
+	let z = 1.0 - dz/2;
 
-	constructor( { Lx = 10, Ly = 10, Lz = 10 } ) {
-		this.setBounds( {Lx,Ly,Lz} );
-		this.types = [];
-		this.xyz = [];
-	}
+	let triplet_vec = [];
+	for( let i=0; i<target_N; i++ ) {
+		const r = Math.sqrt( 1.0-z*z );
+		const x = Math.cos( l ) * r;
+		const y = Math.sin( l ) * r;
 
-	setBounds( { Lx = 10, Ly = 10, Lz = 10 } ) {		
-		this.Lx = Lx;
-		this.Ly = Ly;
-		this.Lz = Lz;
-	}
+		triplet_vec.push( [x,y,z] );
 
-	addParticle( { type=0, x=0, y=0, z=0 } ) {
-		this.types.push( type );
-		this.xyz.push( [x,y,z] );
+		z -= dz;
+		l += dl;
 	}
-
-	getParticle( index ) {
-		if( index<0 || index>=this.xyz.length ) {
-			console.log( "Bad index : ", index );
-			return undefined;
-		}
-		return { types:[this.types[index]], xyz:[this.xyz[index]] };
-	}
-
-	setParticle( { index, type=0, x=0, y=0, z=0 } ) {
-		if( index<0 || index>=this.xyz.length ) {
-			console.log( "Bad index : ", index );
-			return undefined;
-		}
-		this.types[index] = type;
-		this.xyz[index] = [x,y,z];
-		return { types:[this.types[index]], xyz:[this.xyz[index]] };
-	}
-
-	deleteParticle( index ) {
-		if( index<0 || index>=this.xyz.length ) {
-			console.log( "Bad index : ", index );
-			return undefined;
-		}
-		this.types.splice( index, 1 );
-		this.xyz.splice( index, 1 );
-		return { types:this.types, xyz:this.xyz };
-	}
+	return triplet_vec;
 }
 
+//
+// Create a simple scene for testing.
+//
+function generateScene( target_N ) {
+	const colors = [ 0xff0000, 0x00ff00, 0x0000ff ];
+	let scene = { structures: {} };
 
+	//
+	// Axes indicator
+	//
+	{
+		let r = 1.0, delta = 2.0;
+
+		let structure = [];
+		structure.push( { type:"cuboid", color:0xffffff, scale:[2,2,2], xyz:[0,0,0] } );
+		for( let axis=0; axis<3; axis++ ) {
+			for( let i=0; i<2; i++ ) {
+				let x = (axis==0) ? ((1+i)*delta) : (0);
+				let y = (axis==1) ? ((1+i)*delta) : (0);
+				let z = (axis==2) ? ((1+i)*delta) : (0);
+				structure.push( { type:"sphere", color:colors[axis], scale:[r,r,r], xyz:[x,y,z] } );
+			}
+		}
+		scene.structures.axes = structure;
+	}
+
+	//
+	// Bounding sphere of specified point density
+	//
+	{
+		let r = 0.2, outer_r = 10.0;
+		let triplet_vec = getUnitSpherePoints( target_N );
+		
+		let structure = [];
+		for( let [x,y,z] of triplet_vec ) {
+			structure.push( {
+				type:"sphere",
+				color:0xffffff,
+				scale:[r,r,r],
+				xyz:[x*outer_r,y*outer_r,z*outer_r] } );
+		}
+		scene.structures.boundary = structure;
+	}
+
+	return scene;
+}
+
+//
+// Basic system configuration
+//
 let config = {
 	port: 3000,
 	Lx: 200,
@@ -86,37 +90,14 @@ let config = {
 	compression: true,
 };
 
-let microstate = new Microstate( { Lx: config.Lx, Ly: config.Ly, Lz: config.Lz } );
-
 //
 // Route handlers
 //
-
 let route_handlers = {
 
 	options: function(req,res) {
-		res.setHeader( "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS" );
+		res.setHeader( "Access-Control-Allow-Methods", "GET,OPTIONS" );
 		res.end();
-	},
-
-	post: function(req,res) {
-		let N = req.body.N;
-
-		if( (!N) || (N<1) || (N>10) ) {
-			console.log( "Bad N: ", N );
-			res.status( 400 );
-			res.end( "Number of new entities (N) is incoorectly specified" );
-			return;
-		}
-
-		for( let i=0; i<N; i++ ) {
-			let x = (Math.random()-0.5) * microstate.Lx;
-			let y = (Math.random()-0.5) * microstate.Ly;
-			let z = (Math.random()-0.5) * microstate.Lz;
-			microstate.addParticle( {type:0,x,y,z} );
-		}
-		const {types,xyz} = microstate;
-		res.end( JSON.stringify( {types,xyz} ) );
 	},
 
 	getMainPage: function(req,res) {
@@ -124,36 +105,13 @@ let route_handlers = {
 		res.end( config.mainPage );		
 	},
 
-	getSingle: function(req,res) {
-		let index = req.params.index;
-		let result = microstate.getParticle(index);
-		if( ! result ) {
-			res.status( 416 );
-			res.end( "Element index is invalid" );
-			return;			
-		}
-		res.end( JSON.stringify(result) );
-	},
+	// Return basic test data for scene
+	getSceneData(req,res) {
+		let ID = req.params.N;
+		let scene_data = generateScene( ((ID*ID)+1)*50 );
 
-	putSingle: function(req,res) {
-		let index = req.params.index;
-		let {type,x,y,z} = req.body;
-		if( ! microstate.setParticle( {index,type,x,y,z} ) ) {
-			res.status( 416 );
-			res.end( "Element index is invalid" );
-			return;
-		}
-		res.end();
-	},
-
-	deleteSingle: function(req,res) {
-		let index = req.params.index;
-		if( ! microstate.deleteParticle(index) ) {
-			res.status( 416 );
-			res.end( "Element index is invalid" );
-			return;
-		}
-		res.end();
+		res.setHeader( "content-type", "application/json" );
+		res.end( JSON.stringify(scene_data) );
 	},
 
 	getDefault: function(req,res) {
@@ -167,7 +125,10 @@ let route_handlers = {
 // Main script starts here.
 //
 
-// Check arguments, load main page data (debug; should really be handled by e.g. nginx)
+//
+// Check arguments, load main page data (only for test purposes;
+// should really be handled by actual webserver, e.g. NGINX).
+//
 {
 	const argv = process.argv;
 
@@ -189,52 +150,53 @@ let route_handlers = {
 	config.mainPage = loadLocalFile( argv[2], "utf8" );
 }
 
-
 //
 // Basic server app setup.
 //
-
 let app = express();
 {
+	//
 	// Handle application/json input, along with urlencoded; only
 	// allow the latter to use simple values in the key/val pairs!
+	// Also enable Helmet for some additional security.
+	//
 	app.use( bodyParser.json() );
 	app.use( bodyParser.urlencoded({extended:false}) );
+	app.use( helmet() );
 
-	// If not using helmet, at least disable x-powered-by header.
-	// https://expressjs.com/en/advanced/best-practice-security.html
-	if( false ) {
-		app.disable('x-powered-by');
-	}
-	else {
-		app.use( helmet() );
-	}
+	// Should be disabled by Helmet, but make sure!
+	app.disable('x-powered-by');
 
 	// Prevent client caching; not included in helmet?
 	app.use( (req,res,next) => {
-		res.setHeader( "Cache-Control",
-			"no-cache,no-store,max-age=0,must-revalidate,proxy-revalidate" );
+		res.setHeader( "Cache-Control", "no-cache,no-store,max-age=0,must-revalidate,proxy-revalidate" );
 		res.setHeader( "Pragma", "no-cache" );
 		res.setHeader( "Expires", "-1" );
 
 		next();
 	});
 
-	// Enable compression. Could relieve pressure on internal networks, external
-	// ssumed to be compressed as standard by any reverse proxy setup.
+	//
+	// Enable compression. May remove some pressure on internal networks, external
+	// traffic assumed to be compressed as standard by any reverse proxy setup.
+	//
 	if( config["compression"] !== undefined && config["compression"] === true ) {
 		console.log( "Using compression." );
 		app.use( compression() );
 	}
 
+	//
 	// Internal paths for serving static files; again, this should really be handled
-	// by a downstream reverse proxy (e.g. nginx).
+	// by a downstream reverse proxy (e.g. nginx), but were only testing here.
+	//
 	{
 		let base_files = express.static( __dirname );
 		app.use( "/", base_files );
 	}
 
-	// Debug!
+	//
+	// Debug! rint some incoming connection information.
+	//
 	app.use( (req,res,next) => {
 		
 		// Return string description for connection information
@@ -270,28 +232,11 @@ let app = express();
 	// Main page
 	app.get( "/", route_handlers.getMainPage );
 
-	// Get xyz triplet for specified index
-	app.get( "/:index", route_handlers.getSingle );
+	// Customized scene for each view ID for testing purposes
+	app.get( "/scene/:N", route_handlers.getSceneData );
 
 	// Default path - must go last!
 	app.get( "*", route_handlers.getDefault );
-
-	//
-	// PUT: modify existing data
-	//
-
-	app.put( "/:index", route_handlers.putSingle );
-
-	//
-	// POST: create new data (see e.g. HTTP/1.1 spec)
-	//
-
-	app.post( "/", route_handlers.post );
-
-	//
-	// DELETE: remove existing data
-	//
-	app.delete( "/:index", route_handlers.deleteSingle );
 }
 
 //
@@ -302,7 +247,6 @@ let server = app.listen( config.port, function() {
 	const {addr,port} = server.address();
 	console.log( "Server: http://[%s]:[%s]", addr, port );
 });
-
 
 //
 // Handle some signals more gracefully, in case we're e.g. running
