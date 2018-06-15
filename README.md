@@ -6,7 +6,7 @@ Includes example Docker file for building containerized derivatives for deployme
 
 ## Requirements
 
-* [Three.js](https://nodejs.org/)
+* [Three.js](https://threejs.org/)
 * [Node.js](https://nodejs.org/) (for simple test server)
 
 The example Node.js server also makes use of some standard tools ([Express](https://expressjs.com/), [Compression](https://www.npmjs.com/package/compression), [Helmet](https://github.com/helmetjs/helmet)) which are available via available via [npm](https://www.npmjs.com/).
