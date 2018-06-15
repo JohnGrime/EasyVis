@@ -35,5 +35,5 @@ If all went well, one should observe three separate `EasyVis` instances arranged
 
 To ensure the EasyVis views resize correctly, we must take care to ensure:
 
-* Any enclosing containers should specified "fr" units in a grid view, rather than "auto" etc.
-* `div` elements containing an EasyView should set `min-height` and `min-width` properties to 0; this prevents e.g. grid elements becoming larger on window resize, _but not being able to shrink again_ (due to the inability of e.g. a grid element to be smaller than its content).
+* Any enclosing containers should specified `fr` units for grid layouts, rather than `auto` etc.
+* `div` elements to contain an `EasyView` instance should set `min-height` and `min-width` properties to 0; this prevents e.g. grid elements becoming larger on window resize, _but not being able to shrink again_ (due to the inability of e.g. a grid element to be smaller than its content).
