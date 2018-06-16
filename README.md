@@ -39,7 +39,7 @@ To build the Docker image from the appropriate directory, identify the output im
 
 	EasyVis $ docker build -t stuff/easyvis .
 
-To run the containerized `EasyVis` server, remember to map the required ports using the `-p pM:pC` option for `docker run` to expose the published container port (`pC`) as a specific port on the local machine (`pM`):
+To run the containerized `EasyVis` server, remember to map the required ports using `-p pM:pC` to expose the published container port (`pC`) as a specific port on the local machine (`pM`):
 
 	EasyVis $ docker run -it --rm -p 3000:3000 stuff/easyvis
 
