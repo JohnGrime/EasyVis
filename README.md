@@ -43,7 +43,7 @@ To run the containerized `EasyVis` server, remember to map the required ports us
 
 	EasyVis $ docker run -it --rm -p 3000:3000 stuff/easyvis
 
-Here we specify the use of a standard interactive terminal (`-it`) and that any changes to the local container file system should not be saved on exit (`--rm`).
+In the example above, we use a standard interactive terminal (`-it`) and specify that any changes to the local container file system should not be saved on exit (`--rm`).
 
 ## Notes
 
