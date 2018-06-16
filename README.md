@@ -1,6 +1,6 @@
 # EasyVis
 
-_A simple example for cross-platform 3D visualization using WebGL via Three.js_
+_A simple example of cross-platform 3D visualization using WebGL via Three.js_
 
 Includes example Docker file for building containerized derivatives for deployment on e.g. Amazon Web Services.
 
@@ -33,11 +33,17 @@ If all went well, one should observe three separate `EasyVis` instances arranged
 
 ## Docker
 
-	EasyVis $ docker build -t EasyVis .
+Included in this repository is a simple Dockerfile to create a Docker image of the example `EasyVis` server with the appropriate software present.
 
-	EasyVis $ docker run -it --rm -p 3000:3000 EasyVis
+To use the containerized example, build the Docker image from the appropriate directory and identify the output image image with a suitable "tag" (e.g. `stuff/easyvis`):
 
-Note: remember to expose the appropriate ports via the `docker run` command line (e.g. `-p 3000:3000`)
+	EasyVis $ docker build -t stuff/easyvis .
+
+The containerized EasyVis example server can then be run as a container. Remember to map the required ports using the `-p pM:pC` option for `docker run` to expose the published container port (`pC`) as a specific port on the local machine (`pM`):
+
+	EasyVis $ docker run -it --rm -p 3000:3000 stuff/easyvis
+
+Here we specify the use of a standard interactive terminal (`-it`) and that any changes to the local container file system should not be saved on exit (`--rm`).
 
 ## Notes
 
