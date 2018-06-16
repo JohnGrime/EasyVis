@@ -35,11 +35,11 @@ If all went well, one should observe three separate `EasyVis` instances arranged
 
 Included in this repository is a simple Dockerfile to create a Docker image of the example `EasyVis` server with the appropriate software present.
 
-To use the containerized example, build the Docker image from the appropriate directory and identify the output image with a suitable "tag" (e.g. `stuff/easyvis`):
+To build the Docker image from the appropriate directory, identify the output image with a suitable "tag" (e.g. `stuff/easyvis`):
 
 	EasyVis $ docker build -t stuff/easyvis .
 
-When running the containerized `EasyVis` server, remember to map the required ports using the `-p pM:pC` option for `docker run` to expose the published container port (`pC`) as a specific port on the local machine (`pM`):
+To run the containerized `EasyVis` server, remember to map the required ports using the `-p pM:pC` option for `docker run` to expose the published container port (`pC`) as a specific port on the local machine (`pM`):
 
 	EasyVis $ docker run -it --rm -p 3000:3000 stuff/easyvis
 
