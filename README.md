@@ -27,7 +27,7 @@ The example Web page (`EasyVis.html`) sets up three `div` elements of class `Eas
 
 Each `EasyVis` instance then posts a `GET` request to the URI `/scene/ID` (with `ID` an integer identifier for a specific `EasyVis` instance).
 
-If all went well, one should observe three separate `EasyVis` instances arranged side-by-side in the web browser; each instance should have a similar (but different!) test scene displayed (**Fig. 1**).
+If all went well, one should observe three separate interactive `EasyVis` instances arranged side-by-side in the web browser; each instance should have a similar (but different!) test scene displayed (**Fig. 1**).
 
 ![Example view from test data](example.png)
 
