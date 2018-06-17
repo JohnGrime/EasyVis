@@ -79,13 +79,12 @@ class MeshCache {
 	constructor() {
 		this.materials = {};
 		this.geometries = {
-			'sphere': new THREE.SphereBufferGeometry(1,10,10),
+			'sphere': new THREE.SphereBufferGeometry( 1, 10, 10 ),
 			'cuboid': new THREE.BoxBufferGeometry( 1, 1, 1 ),
 		}
 	}
 
 	get( {type, color, sx=1, sy=1, sz=1, x=0, y=0, z=0} ) {
-
 		type = type || "sphere";
 		color = color || 0xffffff;
 		sx = sx || 1.0;

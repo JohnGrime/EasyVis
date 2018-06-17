@@ -17,7 +17,6 @@ let staticScene = true; // do we need animation loops for scenes?
 		worlds.push( world );
 		elem.appendChild( canvas );
 	}
-
 }
 
 window.addEventListener( 'resize', resizeHandler, false );
@@ -115,7 +114,6 @@ function resizeHandler() {
 		let parent_elem = world.renderer.domElement.parentNode;
 		let w = parent_elem.clientWidth;
 		let h = parent_elem.clientHeight;
-		console.log( parent_elem, w, h );
 		world.Resize( w, h );
 
 	}
